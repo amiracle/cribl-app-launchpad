@@ -1,0 +1,21 @@
+# ServiceNow Integration
+# Replace "your-instance.service-now.com" with your organization's ServiceNow domain.
+# Store credentials in KV store at: settings/servicenow_credentials
+#
+# To enable direct ticket submission:
+# 1. Uncomment the block below
+# 2. Replace the domain with your ServiceNow instance
+# 3. Store base64-encoded credentials via the app's KV store
+
+# your-instance.service-now.com:
+#   paths:
+#     allowlist:
+#       - /api/now/table/incident
+#       - /api/now/table/sc_request
+#       - /api/now/table/sc_req_item
+#   headers:
+#     inject:
+#       Authorization: "'Basic ' + kv.servicenow_credentials"
+#       Content-Type: "'application/json'"
+#       Accept: "'application/json'"
+#   timeout: 30000
