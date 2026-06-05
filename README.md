@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# Cribl Launchpad
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Cribl Launchpad is a [Cribl App Platform](https://docs.cribl.io/apps/) application that helps non-technical application owners set up proper observability for their self-created applications. Whether you built your app with an AI coding assistant, a low-code platform, or with help from a developer friend, Launchpad walks you through everything needed to get your application's logs properly configured and routed to the right teams.
 
-Currently, two official plugins are available:
+## The Problem
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Organizations are seeing a surge of "vibe coded" applications — tools built by business users, citizen developers, and teams using AI assistants. These applications often ship without proper logging, without ownership tags, and without any plan for how operational and security teams will monitor them. When something goes wrong, nobody knows who owns the app, what it logs, or where to look.
 
-## React Compiler
+## What Launchpad Does
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Launchpad provides a guided, step-by-step wizard that collects everything needed to onboard an application into your organization's observability stack:
 
-## Expanding the ESLint configuration
+**Step 1 — App Identity**
+Register your application with a name, owner, team, business unit, and environment. This information feeds into your CMDB and ensures the right people get paged when something breaks.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Step 2 — Logging Configuration**
+Describe how your application logs: what format (JSON, syslog, etc.), which severity levels it emits, and what fields are in each log entry. Sensible defaults are pre-filled so you don't need to be a logging expert.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Step 3 — Routing & Destinations**
+Choose where your telemetry goes. Most applications route to both Operations (for uptime and performance monitoring) and Security Operations (for audit, compliance, and threat detection). Pick which security event patterns to detect — authentication failures, privilege escalation, sensitive data access, and more.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**Step 4 — Review & Generate**
+Review your configuration, save it for future reference, and generate a ServiceNow onboarding ticket. You can copy the ticket payload to paste into ServiceNow manually, or submit it directly if your organization has configured the integration.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Who Is This For
+
+- **Business users** who built an internal tool and need to "make it official"
+- **Citizen developers** who used AI assistants or low-code platforms to create applications
+- **Team leads** responsible for ensuring their team's apps meet observability standards
+- **Platform teams** who want a self-service path for application onboarding instead of manual intake
+
+## Key Features
+
+- **Guided wizard** — No observability expertise required. Plain-English descriptions explain every field.
+- **Smart defaults** — JSON logging, standard severity levels, and common key fields are pre-filled.
+- **Saved configurations** — Configurations persist in Cribl's KV Store so you can revisit and update them.
+- **ServiceNow integration** — Generate a properly formatted onboarding ticket with all CMDB fields populated, or submit directly via API.
+- **Dual routing** — Configure telemetry to flow to both Ops and SecOps with appropriate filtering.
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Package for Cribl App Platform (.tgz)
+npm run package
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Installing in Cribl
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Run `npm run package` to produce a `.tgz` bundle in the `build/` directory.
+2. In the Cribl UI, navigate to Apps and click "Add App."
+3. Upload the `.tgz` file.
+4. (Optional) Configure your ServiceNow instance domain in `config/proxies.yml` before packaging to enable direct ticket submission.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## ServiceNow Integration
+
+Launchpad can generate ServiceNow tickets in two ways:
+
+1. **Copy & paste** — The Review step shows the full ticket payload as formatted JSON. Copy it and create the ticket manually.
+2. **Direct submission** — Uncomment and configure the ServiceNow domain in `config/proxies.yml`, store your credentials in the app's KV Store, and submit tickets directly from the wizard.
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite (build tooling)
+- React Router (client-side navigation)
+- Cribl App Platform APIs (KV Store, Proxy)
